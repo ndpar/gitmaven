@@ -1,0 +1,10 @@
+/target
+
+/gitmaven-jar/.classpath
+/gitmaven-jar/.project
+/gitmaven-jar/target
+
+/gitmaven-war/.classpath
+/gitmaven-war/.project
+/gitmaven-war/target
+
