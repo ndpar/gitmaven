@@ -36,5 +36,6 @@
 ## Push to remote Git repository (optional)
 
     $ git remote add origin git@github.com:ndpar/gitmaven.git
+    $ git push origin master
     $ git push --tags
 
