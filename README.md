@@ -30,6 +30,11 @@
 
 ## Release project
 
-    mvn release:prepare
-    mvn release:perform
+    $ mvn release:prepare
+    $ mvn release:perform
+
+## Push to remote Git repository (optional)
+
+    $ git remote add origin git@github.com:ndpar/gitmaven.git
+    $ git push --tags
 
