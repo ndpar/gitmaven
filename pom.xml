@@ -50,7 +50,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-scm-plugin</artifactId>
-                    <version>1.4</version>
+                    <version>1.5-SNAPSHOT</version>
                 </plugin>
             </plugins>
         </pluginManagement>
