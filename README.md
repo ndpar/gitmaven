@@ -33,6 +33,11 @@
     $ mvn release:prepare
     $ mvn release:perform
 
+## Fix bugs in maintenance branch
+
+    $ mvn release:branch -DbranchName=maint-1.0.x
+    $ git co maint-1.0.x
+
 ## Push to remote Git repository (optional)
 
     $ git remote add origin git@github.com:ndpar/gitmaven.git
