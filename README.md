@@ -26,7 +26,7 @@
 
     $ git init
     $ git add .
-    $ git ci -m 'Initial checkin'
+    $ git checkin -m 'Initial checkin'
 
 ## Release project
 
@@ -36,11 +36,25 @@
 ## Fix bugs in maintenance branch
 
     $ mvn release:branch -DbranchName=maint-1.0.x
-    $ git co maint-1.0.x
+    $ git checkout maint-1.0.x
+
+## Merge fixes to master
+
+    $ git checkout master
+    $ git merge maint-1.0.x
+
+## Configure remote Git repository (optional)
+
+    $ git checkout master
+    $ git remote add origin git@github.com:ndpar/gitmaven.git
+    $ git checkout maint-1.0.x
+    $ git-publish-branch
 
 ## Push to remote Git repository (optional)
 
-    $ git remote add origin git@github.com:ndpar/gitmaven.git
-    $ git push origin master
+    $ git checkout master
+    $ git push
+    $ git checkout maint-1.0.x
+    $ git push
     $ git push --tags
 
