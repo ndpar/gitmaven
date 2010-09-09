@@ -58,3 +58,7 @@
     $ git push
     $ git push --tags
 
+### Resources
+
+[git-publish-branch](http://git-wt-commit.rubyforge.org/#git-publish-branch) script
+
