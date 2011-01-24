@@ -33,27 +33,51 @@
     $ mvn release:prepare
     $ mvn release:perform
 
+When asked for new development version, increment last number (i.e. keep default value).
+
 ## Fix bugs in maintenance branch
 
     $ mvn release:branch -DbranchName=maint-1.0.x
     $ git checkout maint-1.0.x
+
+When asked for new working copy version, increment second number and set last one to zero.
+
+    edit-add-commit-loop
+    $ mvn release:prepare release:perform
 
 ## Merge fixes to master
 
     $ git checkout master
     $ git merge maint-1.0.x
 
+While resolving conflicts, keep the latest (HEAD) version.
+
+    $ git add .
+    $ git ci -m "Merged branch maint-1.0.x"
+
 ## Configure remote Git repository (optional)
+
+Master branch
 
     $ git checkout master
     $ git remote add origin git@github.com:ndpar/gitmaven.git
+    $ git push origin master
+
+Maintenance branch
+
     $ git checkout maint-1.0.x
     $ git-publish-branch
 
 ## Push to remote Git repository (optional)
 
+Master branch
+
     $ git checkout master
     $ git push
+    $ git push --tags
+
+Maintenance branch
+
     $ git checkout maint-1.0.x
     $ git push
     $ git push --tags
