@@ -1,59 +1,137 @@
 # Releasing Maven projects hosted in local Git repository
 
+## Setup local Git repository
+
+    $ touch .gitignore
+    $ git init
+    $ git add .
+    $ git commit -m 'Initial checkin'
+
+The result Git tree
+
+    * 84a7df07 (HEAD, master) Initial checkin
+
 ## Setup Maven project
 
-- Create Maven project.
-- Configure `scm` section to use local Git repository.
+Create Maven project (scaffolding and POM file). The default project version is
+
+    <version>1.0-SNAPSHOT</version>
+
+Configure `scm` section to use local Git repository.
 
     <scm>
         <connection>scm:git:file://.</connection>
         <developerConnection>scm:git:file://.</developerConnection>
         <url>scm:git:file://.</url>
+        <tag>HEAD</tag>
     </scm>
 
-- Configure `distributionManagement` section to point to your remote Maven repository.
-- Configure Maven release plugin to use local checkout
+Configure `distributionManagement` section to point to your Maven repository.
 
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-            <localCheckout>true</localCheckout>
-        </configuration>
-    </plugin>
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>http://maven.ndpar.com:9191/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://maven.ndpar.com:9191/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
-## Setup local Git repository
+Configure Maven `release` plugin to use local checkout
 
-    $ git init
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <localCheckout>true</localCheckout>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+Commit the changes
+
     $ git add .
-    $ git checkin -m 'Initial checkin'
+    $ git commit -m 'Set up Maven project'
 
-## Release project
+The result Git tree
 
-    $ mvn release:prepare
-    $ mvn release:perform
+    * 7e850012 (HEAD, master) Set up Maven project
+    * 84a7df07 Initial checkin
 
-When asked for new development version, increment last number (i.e. keep default value).
+## Master release
 
-## Fix bugs in maintenance branch
+    $ mvn --batch-mode release:prepare release:perform
 
-    $ mvn release:branch -DbranchName=maint-1.0.x
-    $ git checkout maint-1.0.x
+The new project version on `master` branch
 
-When asked for new working copy version, increment second number and set last one to zero.
+    <version>1.1-SNAPSHOT</version>
 
-    edit-add-commit-loop
-    $ mvn release:prepare release:perform
+The result Git tree
 
-## Merge fixes to master
+    * bc7b6556 (HEAD, master) [maven-release-plugin] prepare for next development iteration
+    * 1598e062 (gitmaven-1.0) [maven-release-plugin] prepare release gitmaven-1.0
+    * 7e850012 Set up Maven project
+    * 84a7df07 Initial checkin
+
+## New maintenance branch
+
+Spawn the maintenance branch from the release commit
+
+    $ git checkout -b maint-1.0 gitmaven-1.0
+
+Switch to maintenance versioning
+
+    $ mvn versions:set -DnewVersion=1.0.0-SNAPSHOT
+
+Commit
+
+    $ git add .
+    $ git commit -m 'New maintenance branch'
+
+The result Git tree
+
+    * 2e7cc323 (HEAD, maint-1.0) New maintenance branch
+    * 1598e062 (gitmaven-1.0) [maven-release-plugin] prepare release gitmaven-1.0
+    * 7e850012 Set up Maven project
+    * 84a7df07 Initial checkin
+
+## Maintenance release
+
+On the maintenance branch
+
+    $ mvn --batch-mode release:prepare release:perform
+
+New project version
+
+    <version>1.0.1-SNAPSHOT</version>
+
+Merge the changes into `master` branch favoring the master version
 
     $ git checkout master
-    $ git merge maint-1.0.x
+    $ git merge -s ours maint-1.0
 
-While resolving conflicts, keep the latest (HEAD) version.
+Double check the project version, it must be the same as before
 
-    $ git add .
-    $ git ci -m "Merged branch maint-1.0.x"
+    <version>1.1-SNAPSHOT</version>
+
+The result Git tree
+
+    *   31273b40 (HEAD, master) Merge branch 'maint-1.0'
+    |\
+    | * c1f1772a (maint-1.0) [maven-release-plugin] prepare for next development iteration
+    | * 3ff5dd60 (gitmaven-1.0.0) [maven-release-plugin] prepare release gitmaven-1.0.0
+    | * 2e7cc323 New maintenance branch
+    * | bc7b6556 [maven-release-plugin] prepare for next development iteration
+    |/
+    * 1598e062 (gitmaven-1.0) [maven-release-plugin] prepare release gitmaven-1.0
+    * 7e850012 Set up Maven project
+    * 84a7df07 Initial checkin
 
 ## Configure remote Git repository (optional)
 
@@ -65,7 +143,7 @@ Master branch
 
 Maintenance branch
 
-    $ git checkout maint-1.0.x
+    $ git checkout maint-1.0
     $ git-publish-branch
 
 ## Push to remote Git repository (optional)
@@ -78,7 +156,7 @@ Master branch
 
 Maintenance branch
 
-    $ git checkout maint-1.0.x
+    $ git checkout maint-1.0
     $ git push
     $ git push --tags
 
